@@ -41,5 +41,18 @@ server {
 }
 EOF
 
-sudo nginx -t && sudo service nginx restart
+sudo nginx -t || { echo "Nginx config test failed"; exit 1; }
+sudo service nginx restart
+sudo curl --version || sudo apt install -y curl
 
+if ! grep -q "127.0.0.1 $SERVER_NAME" /etc/hosts; then
+	echo "127.0.0.1 $SERVER_NAME" | sudo tee -a /etc/hosts
+	echo "record added to /etc/hosts"
+else
+	echo "record is exists"
+fi
+
+if ! curl -sSf -max-time 5 "http://$SERVER_NAME:$PORT" > /dev/null; then
+	echo "site $SERVER_NAME:$PORT is not responding or ruterned an error"
+	exit 1
+fi
