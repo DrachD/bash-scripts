@@ -44,6 +44,7 @@ EOF
 sudo nginx -t || { echo "Nginx config test failed"; exit 1; }
 sudo service nginx restart
 sudo curl --version || sudo apt install -y curl
+sudo systemctl enable nginx
 
 if ! grep -q "127.0.0.1 $SERVER_NAME" /etc/hosts; then
 	echo "127.0.0.1 $SERVER_NAME" | sudo tee -a /etc/hosts
